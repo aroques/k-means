@@ -2,13 +2,14 @@ from random import sample
 from typing import List
 from scipy.spatial.distance import euclidean, cityblock
 from math import isclose
-from abc import ABC
+from random import Random
 
 
-class KMeans(ABC):
-    def __init__(self, num_clusters: int, type_of_distance: str):
+class KMeans:
+    def __init__(self, num_clusters: int, type_of_distance: str, seed: int):
         self.num_clusters = num_clusters
         self.type_of_distance = type_of_distance
+        self.random = Random(seed)
         self.centroids = None
         self.labels_ = None
 
@@ -55,7 +56,7 @@ class KMeans(ABC):
             A random sample of num_cluster data points
 
         """
-        return sample(data, self.num_clusters)
+        return self.random.sample(data, self.num_clusters)
 
     def __get_labels(self, centroids: List, data: List) -> List[int]:
         """
@@ -86,6 +87,18 @@ class KMeans(ABC):
             labels.append(closest_centroid_index)
 
         return labels
+
+    def get_labels_for_plotting(self, data):
+        if self.type_of_distance == 'manhattan':
+            labels = []
+            for i, label in enumerate(self.labels_):
+                point = data[i]
+                if point in self.centroids:
+                    label = self.num_clusters
+                labels.append(label)
+            return labels
+        else:
+            return self.labels_ + [self.num_clusters for _ in range(self.num_clusters)]
 
     def __calculate_distance(self, p1, p2):
         """
