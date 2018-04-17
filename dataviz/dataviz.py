@@ -9,13 +9,13 @@ import pandas as pd
 import seaborn as sns
 
 
-def plot_clusters(clusters: List[List], labels: List[int], centroids: List[List]) -> None:
+def plot_clusters(clusters: List[List], centroids: List[List], labels: List[int]) -> None:
     """Plot custer data.
 
     Args:
         clusters: Cluster data to plot.
-        labels: The cluster each point belongs to.
         centroids: Centroids of clusters
+        labels: The cluster each point belongs to.
 
     Returns:
         None

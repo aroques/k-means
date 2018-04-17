@@ -11,11 +11,11 @@ import matplotlib.pyplot as plt
 def main():
     num_clusters = 4
     clustered_data = generate_data(num_clusters)
-    type_of_distance = 'euclidean'
+    type_of_distance = 'manhattan'
     k_means = KMeans(num_clusters=num_clusters, type_of_distance=type_of_distance, seed=0)
     k_means.fit(clustered_data)
 
-    plot_clusters(clustered_data, k_means.labels_, k_means.centroids)
+    plot_clusters(clustered_data, k_means.centroids, k_means.labels_)
 
     plt.show()
 
