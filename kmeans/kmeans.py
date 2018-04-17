@@ -27,11 +27,7 @@ class KMeans:
 
         centroids_moved = True
 
-        count = 0
-
         while centroids_moved:
-            count += 1
-
             self.labels_ = self.__get_labels(self.centroids, data)
 
             data_by_cluster = self.__get_data_grouped_by_cluster(data)
@@ -178,3 +174,7 @@ class KMeans:
             if centroids_moved:
                 break
         return centroids_moved
+
+    @property
+    def total_sum_squared_error(self):
+        return None
