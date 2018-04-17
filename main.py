@@ -3,20 +3,18 @@ from typing import List
 from dataviz import generate_clusters
 from dataviz import plot_clusters
 from kmeans import KMeans
-import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 
 def main():
     num_clusters = 4
     clustered_data = generate_data(num_clusters)
-    type_of_distance = 'manhattan'
+    type_of_distance = 'euclidean'
+
     k_means = KMeans(num_clusters=num_clusters, type_of_distance=type_of_distance, seed=0)
     k_means.fit(clustered_data)
 
     plot_clusters(clustered_data, k_means.centroids, k_means.labels_)
-
     plt.show()
 
 
@@ -37,23 +35,6 @@ def generate_data(num_clusters: int) -> List[List]:
     spread = 15
     bounds = (lower_bound+spread, upper_bound-spread)
     return generate_clusters(num_clusters, pts_per_cluster, spread, bounds, bounds)
-
-
-def plot(data: List[List]) -> None:
-    """
-    Plot data
-
-    Args:
-        data: Data to plot.
-
-    Returns:
-        None
-    """
-    columns = ['x', 'y']
-    data = pd.DataFrame(data, columns=columns)
-    lm = sns.lmplot(*columns, data=data, fit_reg=False, legend=False)
-    lm.fig.suptitle('Unlabeled Data')
-    plt.show()
 
 
 if __name__ == '__main__':
