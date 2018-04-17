@@ -1,4 +1,3 @@
-from random import sample
 from typing import List
 from scipy.spatial.distance import euclidean, cityblock
 from math import isclose
@@ -87,18 +86,6 @@ class KMeans:
             labels.append(closest_centroid_index)
 
         return labels
-
-    def get_labels_for_plotting(self, data):
-        if self.type_of_distance == 'manhattan':
-            labels = []
-            for i, label in enumerate(self.labels_):
-                point = data[i]
-                if point in self.centroids:
-                    label = self.num_clusters
-                labels.append(label)
-            return labels
-        else:
-            return self.labels_ + [self.num_clusters for _ in range(self.num_clusters)]
 
     def __calculate_distance(self, p1, p2):
         """

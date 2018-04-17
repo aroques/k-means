@@ -2,33 +2,61 @@ from math import cos
 from math import pi
 from math import sin
 from typing import List
-from random import Random, sample
+from random import Random
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
 
-def plot_clusters(clusters: List[List], labels: List[int]) -> None:
+def plot_clusters(clusters: List[List], labels: List[int], centroids: List[List]) -> None:
     """Plot custer data.
 
     Args:
         clusters: Cluster data to plot.
         labels: The cluster each point belongs to.
+        centroids: Centroids of clusters
 
     Returns:
         None
     """
-    markers = ['*', 'o', '^', '+']
-    markers = sample(markers, len(set(labels)) - 1)
-    markers.append('x')
+
+    # Setup needed to construct plot
+    num_clusters = len(set(labels))
+    markers = get_markers(num_clusters)
+    palette = get_palette(num_clusters)
     columns = ['x', 'y']
-    data = pd.DataFrame(clusters, columns=columns)
-    data['labels'] = pd.Series(labels, index=data.index)  # Add labels as a column for coloring
-    sns.lmplot(*columns, data=data, fit_reg=False, legend=False,
-               hue='labels', palette=['blue', 'orange', 'green', 'purple', 'red'], markers=markers,
+
+    # Get dataframe for data
+    df = pd.DataFrame(clusters, columns=columns)
+    df['labels'] = pd.Series(labels, index=df.index)  # Add labels as a column for coloring
+
+    # Add centroids to dataframe
+    centroids_df = pd.DataFrame(centroids, columns=columns)
+    centroids_df['labels'] = ['centroid' for _ in range(len(centroids))]
+    df = df.append(centroids_df, ignore_index=True)
+
+    # Plot
+    sns.lmplot(*columns, data=df, fit_reg=False, legend=False,
+               hue='labels', palette=palette, markers=markers,
                scatter_kws={'s': 50})
     plt.show()
+
+
+def get_markers(num_clusters):
+    random = Random(0)
+    markers = ['*', 'o', '^', '+']
+    markers = random.sample(markers, num_clusters)
+    markers.append('x')
+    return markers
+
+
+def get_palette(num_clusters):
+    random = Random(0)
+    colors = ['blue', 'orange', 'green', 'purple']
+    colors = random.sample(colors, num_clusters)
+    colors.append('red')
+    return colors
 
 
 def generate_clusters(num_clusters, pts_per_cluster, spread, bound_for_x, bound_for_y) -> List[List]:
