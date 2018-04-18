@@ -90,6 +90,17 @@ class KMeans:
         return labels
 
     def __calculate_error(self, distance: float) -> float:
+        """
+        Calculates the error given a distance. If the type of distance is
+        Euclidean we square the error, but if it is Manhattan then
+        we do not.
+        Args:
+            distance: A measure of distance
+
+        Returns:
+            An error value
+
+        """
         if self.type_of_distance == 'euclidean':
             return distance ** 2
         else:
@@ -171,18 +182,15 @@ class KMeans:
             new_centroids: Centroids that have been computed the calling loop
 
         Returns:
-            centroids_moved: Whether or not any of the new centroids are significantly different
+            Whether or not any of the new centroids are significantly different
             than the previous centroids. If the new centroids are significantly different, then
             we say that the 'centroids have moved'.
 
         """
-        centroids_moved = False
         for i, new_centroid in enumerate(new_centroids):
             for j, pt in enumerate(new_centroid):
                 equal = isclose(new_centroid[j], self.centroids[i][j], abs_tol=0.00001)
                 if not equal:
-                    centroids_moved = True
-                    break
-            if centroids_moved:
-                break
-        return centroids_moved
+                    return True
+
+        return False
