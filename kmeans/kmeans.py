@@ -55,6 +55,7 @@ class KMeans:
 
     def __get_labels(self, centroids: List, data: List) -> List[int]:
         """
+        Labels each data point with a cluster. Also stores each cluster's error.
         Args:
             centroids: The current centroids in the dataset
             data: List of data points
@@ -67,6 +68,7 @@ class KMeans:
 
         """
         labels = []
+        self.cluster_error = [0 for _ in range(self.num_clusters)]
 
         for point in data:
             closest_distance = float('inf')
@@ -81,9 +83,19 @@ class KMeans:
 
             labels.append(closest_centroid_index)
 
+            error = self.__calculate_error(closest_distance)
+
+            self.cluster_error[closest_centroid_index] += error
+
         return labels
 
-    def __calculate_distance(self, p1, p2):
+    def __calculate_error(self, distance: float) -> float:
+        if self.type_of_distance == 'euclidean':
+            return distance ** 2
+        else:
+            return distance
+
+    def __calculate_distance(self, p1: List, p2: List) -> float:
         """
         Calculates the distance between two points.
         Args:
@@ -174,7 +186,3 @@ class KMeans:
             if centroids_moved:
                 break
         return centroids_moved
-
-    @property
-    def total_sum_squared_error(self):
-        return None

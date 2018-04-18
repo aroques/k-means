@@ -1,4 +1,5 @@
 from . import KMeans
+from typing import List
 
 
 class BisectingKMeans:
@@ -7,7 +8,7 @@ class BisectingKMeans:
         self.type_of_distance = type_of_distance
         self.seed = seed
 
-    def fit(self, data):
+    def fit(self, data: List[List]) -> None:
         clusters = [data]
         # Remove a cluster from the list of clusters
         cluster = clusters.pop()
