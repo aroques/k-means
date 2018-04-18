@@ -14,8 +14,10 @@ class KMeans:
 
     def fit(self, data: List[List]) -> None:
         """
-        Clusters the data into k clusters. The cluster that each data point belongs
-        to is stored in self.labels_.
+        Clusters the data into k clusters.
+
+        The cluster that each data point belongs to is stored in self.labels_.
+
         Args:
             data: List of data points
 
@@ -44,6 +46,8 @@ class KMeans:
 
     def __select_initial_centroids(self, data: List) -> List[List]:
         """
+        Randomly selects initial centroids from data.
+
         Args:
             data: List of data points
 
@@ -55,7 +59,8 @@ class KMeans:
 
     def __get_labels(self, centroids: List, data: List) -> List[int]:
         """
-        Labels each data point with a cluster. Also stores each cluster's error.
+        Labels each data point with a cluster records each cluster's error.
+
         Args:
             centroids: The current centroids in the dataset
             data: List of data points
@@ -91,9 +96,11 @@ class KMeans:
 
     def __calculate_error(self, distance: float) -> float:
         """
-        Calculates the error given a distance. If the type of distance is
-        Euclidean we square the error, but if it is Manhattan then
-        we do not.
+        Calculates the error given a distance.
+
+        If the type of distance is Euclidean we square the error,
+        but if it is Manhattan, then we do not.
+
         Args:
             distance: A measure of distance
 
@@ -109,6 +116,7 @@ class KMeans:
     def __calculate_distance(self, p1: List, p2: List) -> float:
         """
         Calculates the distance between two points.
+
         Args:
             p1: first point
             p2: second point
@@ -124,6 +132,8 @@ class KMeans:
 
     def __get_data_grouped_by_cluster(self, data: List[List]) -> List[List]:
         """
+        Groups data into clusters.
+
         Args:
             data: List of data points
 
@@ -143,8 +153,8 @@ class KMeans:
 
     def __compute_new_centroids(self, data_by_cluster: List[List]) -> List[List]:
         """
-        Computes new centroids by calculating each center of all the points
-        that belong to a cluster.
+        Calculates each center of all the points that belong to a each cluster.
+
         Args:
             data_by_cluster: List of data that has been grouped by cluster.
 
@@ -160,7 +170,8 @@ class KMeans:
 
     def __calculate_new_centroid(self, points):
         """
-        Calculates a new centroid of a cluster
+        Calculates a new centroid of a cluster.
+
         Args:
             points: Points that belong to a given cluster
 
@@ -178,6 +189,8 @@ class KMeans:
 
     def __centroids_have_moved(self, new_centroids: List[List]) -> bool:
         """
+        Determines whether centroids have moved.
+
         Args:
             new_centroids: Centroids that have been computed the calling loop
 
