@@ -1,8 +1,7 @@
 from typing import List
-from scipy.spatial.distance import euclidean, cityblock
 from math import isclose
 from random import Random
-from .utils import calculate_centroid
+from .utils import calculate_centroid, calculate_distance
 
 
 class KMeans:
@@ -12,7 +11,7 @@ class KMeans:
         self.random = Random(seed)
         self.data_by_cluster = None
         self.centroids = None
-        self.labels_ = None
+        self.labels = None
 
     def fit(self, data: List[List]) -> None:
         """
@@ -32,7 +31,7 @@ class KMeans:
         centroids_moved = True
 
         while centroids_moved:
-            self.labels_ = self.__get_labels(self.centroids, data)
+            self.labels = self.__get_labels(self.centroids, data)
 
             self.data_by_cluster = self.__get_data_grouped_by_cluster(data)
 
@@ -42,7 +41,7 @@ class KMeans:
 
             self.centroids = new_centroids
 
-        if len(set(self.labels_)) != self.num_clusters:
+        if len(set(self.labels)) != self.num_clusters:
             # We have less than k clusters so raise exception
             raise Exception('We lost a cluster!')
 
@@ -82,7 +81,7 @@ class KMeans:
             closest_centroid_index = -1
 
             for i, centroid in enumerate(centroids):
-                distance = self.__calculate_distance(point, centroid)
+                distance = calculate_distance(point, centroid, self.type_of_distance)
 
                 if distance < closest_distance:
                     closest_distance = distance
@@ -115,23 +114,6 @@ class KMeans:
         else:
             return distance
 
-    def __calculate_distance(self, p1: List, p2: List) -> float:
-        """
-        Calculates the distance between two points.
-
-        Args:
-            p1: first point
-            p2: second point
-
-        Returns:
-            Distance between two points.
-
-        """
-        if self.type_of_distance.lower() == 'euclidean':
-            return euclidean(p1, p2)
-        else:
-            return cityblock(p1, p2)
-
     def __get_data_grouped_by_cluster(self, data: List[List]) -> List[List]:
         """
         Groups data into clusters.
@@ -148,7 +130,7 @@ class KMeans:
         data_by_cluster = [[] for _ in range(self.num_clusters)]
 
         for i, pt in enumerate(data):
-            cluster = self.labels_[i]
+            cluster = self.labels[i]
             data_by_cluster[cluster].append(pt)
 
         return data_by_cluster

@@ -2,8 +2,9 @@ from typing import List
 
 from dataviz import generate_clusters
 from dataviz import plot_clusters
-from kmeans import KMeans, BisectingKMeans
+from kmeans import BisectingKMeans
 import matplotlib.pyplot as plt
+from kmeans import print_report
 
 
 def main():
@@ -11,19 +12,13 @@ def main():
     clustered_data = generate_data(num_clusters)
     type_of_distance = 'euclidean'
 
-    #k_means = KMeans(num_clusters=num_clusters, type_of_distance=type_of_distance, seed=0)
-    #k_means.fit(clustered_data)
-
     bk_means = BisectingKMeans(num_clusters=num_clusters, type_of_distance=type_of_distance, seed=0)
     bk_means.fit(clustered_data)
 
-    print(len(clustered_data))
-    print(len(bk_means.labels))
-    print(len(set(bk_means.labels)))
-    print(len(bk_means.centroids))
-
     plot_clusters(clustered_data, bk_means.centroids, bk_means.labels)
     plt.show()
+
+    print_report(bk_means)
 
 
 def generate_data(num_clusters: int) -> List[List]:

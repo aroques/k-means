@@ -1,7 +1,6 @@
 from . import KMeans
 from typing import List
-from .utils import calculate_centroid
-from random import randint
+from .utils import calculate_centroid, get_intercluster_distances
 
 
 class BisectingKMeans:
@@ -10,6 +9,8 @@ class BisectingKMeans:
         self.type_of_distance = type_of_distance
         self.seed = seed
         self.centroids = None
+        self.data_by_cluster = None
+        self.cluster_error = [0 for _ in range(self.num_clusters)]
 
     def fit(self, data: List[List]) -> None:
         # Initialize list of clusters as
@@ -30,9 +31,15 @@ class BisectingKMeans:
             for i, cluster in enumerate(lowest_error_kmeans.data_by_cluster):
                 clusters_with_error.append((cluster, lowest_error_kmeans.cluster_error[i]))
 
-        clusters = self.__get_clusters(clusters_with_error)
-        self.__compute_centroids(clusters)
-        self.__compute_labels(data, clusters)
+        self.data_by_cluster = self.__get_clusters(clusters_with_error)
+        self.__compute_centroids(self.data_by_cluster)
+        self.__compute_labels(data, self.data_by_cluster)
+
+        # Compute cluster error
+        for i, cluster_with_error in enumerate(clusters_with_error):
+            error = cluster_with_error[1]
+            self.cluster_error[i] = error
+
 
     @staticmethod
     def __select_lowest_error_kmeans(kmeans_list):
@@ -85,14 +92,13 @@ class BisectingKMeans:
         return kmeans_list
 
     def __compute_centroids(self, clusters):
-        """
-        Computes centroids
+        """Computes centroids
 
         Args:
             clusters: A list of clusters. A cluster is a list of data points.
 
-        Returns: None
-
+        Returns:
+            None
         """
         self.centroids = []
         for cluster in clusters:
@@ -101,14 +107,13 @@ class BisectingKMeans:
 
     @staticmethod
     def __get_clusters(clusters_with_error):
-        """
-        Returns list of clusters.
+        """Returns list of clusters.
 
         Args:
             clusters_with_error: A list of (cluster, error) tuples.
 
-        Returns: A list of clusters. A cluster is a list of data points.
-
+        Returns:
+            A list of clusters. A cluster is a list of data points.
         """
         clusters = []
         for cluster_with_error in clusters_with_error:
@@ -116,16 +121,14 @@ class BisectingKMeans:
         return clusters
 
     def __compute_labels(self, data, clusters):
-        """
-        Computes a list of labels.
-
+        """Computes a list of labels.
 
         Args:
             data: A list of data points.
             clusters: A list of clusters.
 
-        Returns: None
-
+        Returns:
+            None
         """
         self.labels = []
         for point in data:
