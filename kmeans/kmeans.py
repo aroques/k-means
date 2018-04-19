@@ -2,6 +2,7 @@ from typing import List
 from scipy.spatial.distance import euclidean, cityblock
 from math import isclose
 from random import Random
+from .utils import calculate_centroid
 
 
 class KMeans:
@@ -9,6 +10,7 @@ class KMeans:
         self.num_clusters = num_clusters
         self.type_of_distance = type_of_distance
         self.random = Random(seed)
+        self.data_by_cluster = None
         self.centroids = None
         self.labels_ = None
 
@@ -32,9 +34,9 @@ class KMeans:
         while centroids_moved:
             self.labels_ = self.__get_labels(self.centroids, data)
 
-            data_by_cluster = self.__get_data_grouped_by_cluster(data)
+            self.data_by_cluster = self.__get_data_grouped_by_cluster(data)
 
-            new_centroids = self.__compute_new_centroids(data_by_cluster)
+            new_centroids = self.__compute_new_centroids(self.data_by_cluster)
 
             centroids_moved = self.__centroids_have_moved(new_centroids)
 
@@ -164,28 +166,9 @@ class KMeans:
         """
         centroids = []
         for points in data_by_cluster:
-            new_centroid = self.__calculate_new_centroid(points)
+            new_centroid = calculate_centroid(points, self.type_of_distance)
             centroids.append(list(new_centroid))
         return centroids
-
-    def __calculate_new_centroid(self, points):
-        """
-        Calculates a new centroid of a cluster.
-
-        Args:
-            points: Points that belong to a given cluster
-
-        Returns:
-            A new centroid
-
-        """
-        if self.type_of_distance == 'euclidean':
-            sum_of_points = [sum(x) for x in zip(*points)]
-            return map(lambda x: x / len(points), sum_of_points)
-        else:
-            geometric_medoid =  \
-                min(map(lambda p1: (p1, sum(map(lambda p2: euclidean(p1, p2), points))), points), key=lambda x: x[1])[0]
-            return geometric_medoid
 
     def __centroids_have_moved(self, new_centroids: List[List]) -> bool:
         """
@@ -207,3 +190,13 @@ class KMeans:
                     return True
 
         return False
+
+    @property
+    def total_error(self):
+        """
+        The sum of each intra-cluster error.
+
+        Returns: The sum of each intra-cluster error
+
+        """
+        return sum(self.cluster_error)
